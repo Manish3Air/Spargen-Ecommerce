@@ -1,11 +1,11 @@
 import React from 'react'
 
-const checkout = () => {
+const page = () => {
   return (
     <div>
-      
+      checkout
     </div>
   )
 }
 
-export default checkout
+export default page

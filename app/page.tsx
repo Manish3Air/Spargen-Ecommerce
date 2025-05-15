@@ -1,25 +1,70 @@
-import React from 'react'
+"use client";
+import React, { useState } from "react";
+import ProductCard from "@/components/product/ProductCard";
+import { useCart }  from "@/context/CartContext";
 
-const page = () => {
+// Inside your Home component:
+
+
+const sampleProducts = [
+  {
+    id: "1",
+    name: "iPhone 15 Pro",
+    price: 999.99,
+    image: "https://via.placeholder.com/160",
+
+    // image: "/products/iphone15pro.png",
+  },
+  {
+    id: "2",
+    name: "Samsung Galaxy S24",
+    price: 899.99,
+    image: "https://via.placeholder.com/160",
+
+    // image: "/products/galaxys24.png",
+  },
+  {
+    id: "3",
+    name: "iPad Air",
+    price: 599.99,
+    image: "https://via.placeholder.com/160",
+
+    // image: "/products/ipadair.png",
+  },
+  {
+    id: "4",
+    name: "OnePlus 12",
+    price: 749.99,
+    image: "https://via.placeholder.com/160",
+
+    // image: "/products/oneplus12.png",
+  },
+];
+
+export default function Home() {
+  const [cart, setCart] = useState<string[]>([]);
+  const  {addToCart}  = useCart();
+
+  // const addToCart = (productId: string) => {
+  //   setCart((prev) => [...prev, productId]);
+   
+  // };
+
   return (
-    <div className=' p-6 text-3xl font-bold w-full flex justify-center items-center gap-2 mt-5 rounded-2xl'>
-      <div className='bg-blue-500 text-2xl w-lg rounded-2xl p-2'>
-      div 1
-      </div>
-      <div className='bg-green-500 text-2xl w-lg rounded-2xl p-2'>
-      div 2
-      </div>
-      <div className='bg-yellow-500 text-2xl w-lg rounded-2xl p-2'>
-      div 3
-      </div>
-      <div className='bg-red-500 text-2xl w-lg rounded-2xl p-2'>
-      div 4
-      </div>
-      <div className='bg-pink-500 text-2xl w-lg rounded-2xl p-2'>
-      div 5
-      </div>
-    </div>
-  )
-}
+    <main className="p-6 min-h-screen bg-[#e0e5ec]">
+      <h1 className="text-4xl font-bold mb-6 text-gray-800">
+        Welcome to MobileZone
+      </h1>
 
-export default page
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+        {sampleProducts.map((product) => (
+          <ProductCard
+            key={product.id}
+            product={product}
+            onAddToCart={addToCart}
+          />
+        ))}
+      </div>
+    </main>
+  );
+}

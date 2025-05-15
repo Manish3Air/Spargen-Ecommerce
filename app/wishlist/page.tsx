@@ -1,11 +1,11 @@
 import React from 'react'
 
-const register = () => {
+const page = () => {
   return (
     <div>
-      
+      Wishlist
     </div>
   )
 }
 
-export default register
+export default page
