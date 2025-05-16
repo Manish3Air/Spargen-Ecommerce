@@ -1,8 +1,13 @@
 "use client";
+import { useAuth } from "@/context/AuthContext";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
 
-import React, { createContext, useContext, useState, ReactNode } from "react";
-
-// 1. Type Definitions
 export interface CartItem {
   id: string;
   name: string;
@@ -20,24 +25,49 @@ interface CartContextType {
   totalPrice: number;
 }
 
-// 2. Create Context
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
-// 3. Provider Component
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const { currentUser } = useAuth();
+
+  // ✅ Load cart for logged-in user
+  useEffect(() => {
+    if (currentUser) {
+      const saved = localStorage.getItem(`cart-${currentUser.email}`);
+      if (saved) {
+        try {
+          setCartItems(JSON.parse(saved));
+        } catch {
+          console.error("Failed to parse cart.");
+        }
+      }
+    }
+  }, [currentUser]);
+
+  // ✅ Save cart per user
+  useEffect(() => {
+    if (currentUser) {
+      localStorage.setItem(
+        `cart-${currentUser.email}`,
+        JSON.stringify(cartItems)
+      );
+    }
+  }, [cartItems, currentUser]);
 
   const addToCart = (item: CartItem) => {
     setCartItems((prev) => {
       const existing = prev.find((i) => i.id === item.id);
       if (existing) {
         return prev.map((i) =>
-          i.id === item.id ? { ...i, quantity: i.quantity + item.quantity } : i
+          i.id === item.id
+            ? { ...i, quantity: i.quantity + item.quantity }
+            : i
         );
       }
       return [...prev, item];
     });
-     alert("Added to cart!");
+    alert("✅ Item added to cart!");
   };
 
   const removeFromCart = (id: string) => {
@@ -53,9 +83,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     );
   };
 
-  const clearCart = () => {
-    setCartItems([]);
-  };
+  const clearCart = () => setCartItems([]);
 
   const totalPrice = cartItems.reduce(
     (total, item) => total + item.price * item.quantity,
@@ -78,11 +106,9 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-// 4. Custom Hook
-export const useCart = (): CartContextType => {
+export const useCart = () => {
   const context = useContext(CartContext);
-  if (!context) {
+  if (!context)
     throw new Error("useCart must be used within a CartProvider");
-  }
   return context;
 };
